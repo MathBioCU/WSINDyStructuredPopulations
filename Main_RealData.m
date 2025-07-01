@@ -154,26 +154,28 @@ if Want_Plots
                     w_ode, fluxflag);
 
     % Load empirical demographic data
-    DAT = load("./RealData/Jackson_etal_data.mat");
+    load("./RealData/Jackson_etal_ages.mat");
+    load("./RealData/Jackson_etal_fert.mat");
+    load("./RealData/Jackson_etal_surv.mat");
 
     % ---------------------------------------------------------------------
     % Plot 1: Fertility Function
     figure; subplot(1,2,1); hold on;
-    scatter(DAT.fit_sim(:,1), DAT.fit_sim(:,4).*DAT.fit_sim(:,5), 1, 'blue', 'filled');
+    scatter(ages, fert.*surv, 1, 'blue', 'filled');
     plot(x, b_learned(x,1,1), 'k', 'LineWidth', 2, 'DisplayName', 'Learned');
     title("Estimated Fertility");
 
     % ---------------------------------------------------------------------
     % Plot 2: Mortality Function
     subplot(1,2,2); hold on;
-    scatter(DAT.fit_sim(:,1), 1 - DAT.fit_sim(:,5), 1, 'blue', 'filled');
+    scatter(ages, 1 - surv, 1, 'blue', 'filled');
     plot(x, -f_learned(x,1,1), 'k', 'LineWidth', 2, 'DisplayName', 'Learned');
     title("Estimated Mortality");
 
     % ---------------------------------------------------------------------
     % Plot 3: Survival per Age Interval
     figure; hold on;
-    scatter(DAT.fit_sim(:,1), DAT.fit_sim(:,5), 1, 'blue', 'filled');
+    scatter(ages, surv, 1, 'blue', 'filled');
     S_learned = zeros(length(x)-1, 1);
     for i = 1:length(x)-1
         S_learned(i) = exp(integral(@(a) f_learned(a,1,1), x(i), x(i+1)));
@@ -181,28 +183,5 @@ if Want_Plots
     plot(x(1:end-1), S_learned, 'k', 'LineWidth', 2, 'DisplayName', 'Learned');
     title("Estimated Survival");
 
-    % ---------------------------------------------------------------------
-    % % Plot 4: Cumulative Survival with Uncertainty
-    % unique_ages = unique(DAT.fit_sim(:,1));
-    % n_ages = length(unique_ages);
-    % n_draws = length(DAT.fit_sim(:,5)) / n_ages;
-    % 
-    % surv_matrix = reshape(DAT.fit_sim(:,5), [n_ages, n_draws])';
-    % cum_surv_matrix = cumprod(surv_matrix, 2);
-    % cum_surv_median = median(cum_surv_matrix, 1);
-    % cum_surv_low = prctile(cum_surv_matrix, 2.5, 1);
-    % cum_surv_high = prctile(cum_surv_matrix, 97.5, 1);
-    % 
-    % S_cum_learned = exp(cumtrapz(x, f_learned(x,1,1)));
-    % 
-    % figure; hold on;
-    % fill([unique_ages; flipud(unique_ages)], ...
-    %      [cum_surv_low, fliplr(cum_surv_high)], ...
-    %      [0.9 0.9 1], 'EdgeColor', 'none', 'DisplayName', '95% CI');
-    % plot(unique_ages, cum_surv_median, 'b-', 'LineWidth', 2, 'DisplayName', 'Median');
-    % plot(x, S_cum_learned, 'k', 'LineWidth', 2, 'DisplayName', 'Learned');
-    % 
-    % xlabel('Age'); ylabel('Cumulative Survival');
-    % title('Cumulative Survival');
-    % legend(); grid on;
+
 end
