@@ -9,7 +9,7 @@ clear; clc;
 %% ------------------------------------------------------------------------
 % 1. Data and Library Selection
 % ------------------------------------------------------------------------
-DataChoice = 6;   % <-- Choose dataset here (1 to 6)
+DataChoice = 2;   % <-- Choose dataset here (1 to 6)
 
 DataBase = {
     "./ExampleData/AgeStructure_1_03_04.mat",               % L.1 / A.1
@@ -172,7 +172,7 @@ end
 %% -----------------------------------------------------------------------
 % 8. Plot Results 
 % ------------------------------------------------------------------------
-% Skip poor fits
+% Skip poor fits as upwind scheme may not be feasible
 if E2_pde >= 3
     return
 end
